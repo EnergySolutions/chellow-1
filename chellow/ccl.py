@@ -3,6 +3,7 @@ import chellow.computer
 import chellow.scenario
 from chellow.utils import HH, ct_datetime, to_utc, utc_datetime
 from dateutil.relativedelta import relativedelta
+from math import floor
 
 
 sess = None
@@ -96,8 +97,8 @@ def ccl(data_source, ct_month=False):
                 kwh += hh['msp-kwh']
                 gbp += hh['msp-kwh'] * rate
 
-        hhs = (
-            data_source.bill_finish - data_source.bill_start).total_seconds()
-        if (kwh / hhs) > ((1000 * 12) / (365 * 24 * 60 * 60)):
+        days = (data_source.bill_finish - data_source.bill_start). \
+            total_seconds() / (60 * 60 * 24)
+        if floor(kwh / days) >= 33:
             data_source.hh_data[-1]['ccl-kwh'] = kwh
             data_source.hh_data[-1]['ccl-gbp'] = gbp
